@@ -2,7 +2,7 @@ import db from "../firestore/config";
 const admin = require("firebase-admin");
 const todoRef = db.collection("todos");
 
-export async function getListTodo(sort = "ASC", limit = 5) {
+export async function getListTodo(sort = "ASC", limit = 0) {
   const todos = await todoRef
     .orderBy("createAt", sort)
     .limit(Number(limit))

@@ -1,5 +1,4 @@
 import db from "../firestore/config";
-const admin = require("firebase-admin");
 const todoRef = db.collection("todos");
 
 export async function getListTodo(sort = "ASC", limit = 0) {
@@ -15,7 +14,7 @@ export async function getListTodo(sort = "ASC", limit = 0) {
 
 export async function getAdd(data) {
   const addTodo = {
-    createAt: admin.firestore.Timestamp.now().toDate(),
+    createAt: new Date(),
     ...data,
     completed: false,
   };
@@ -26,19 +25,15 @@ export async function getAdd(data) {
 }
 
 export async function updateTodos(todos = []) {
-  const todoAll = await getListTodo();
+  const updates = todos.map(async (id) => {
+    const { completed } = (await todoRef.doc(`${id}`).get()).data();
 
-  const updateAll = todoAll.filter((todoItem) => {
-    return todos.includes(todoItem.id);
-  });
-
-  const updates = updateAll.map((todo) => {
-    return todoRef.doc(`${todo.id}`).update({
-      ...todo,
-      completed: !todo.completed,
-      updatedAt: admin.firestore.Timestamp.now().toDate(),
+    return todoRef.doc(`${id}`).update({
+      completed: !completed,
+      updatedAt: new Date(),
     });
   });
+
   return await Promise.all(updates);
 }
 

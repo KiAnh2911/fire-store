@@ -8,7 +8,7 @@ import {
 export async function getTodos(ctx) {
   try {
     const { limit, sort } = ctx.query;
-    const data = await getListTodo(sort, limit);
+    const data = await getListTodo({ sort, limit });
     ctx.status = 200;
     return (ctx.body = {
       todo: data,
